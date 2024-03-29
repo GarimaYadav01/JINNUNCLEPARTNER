@@ -1,24 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-const QRScreen = () => {
-  const [scannedData, setScannedData] = useState('');
 
-  // Handle QR code scan
-  const onReadQRCode = (e) => {
-    setScannedData(e.data || 'No QR code data found');
+const QRScanner = () => {
+  const [scanned, setScanned] = useState(false);
+
+  useEffect(() => {
+    if (scanned) {
+      // Handle scanned QR code
+      // For example, you can navigate to a new screen or perform an action
+      alert('QR code scanned!');
+    }
+  }, [scanned]);
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
   return (
     <View style={styles.container}>
-      <QRCodeScanner
-        onRead={onReadQRCode}
+      <RNCamera
+        style={styles.preview}
+        type={RNCamera.Constants.Type.back}
+        onBarCodeRead={handleBarCodeScanned}
         flashMode={RNCamera.Constants.FlashMode.auto}
-        reactivate={true}
-        reactivateTimeout={3000}
-      />
-      <Text style={styles.scannedData}>{scannedData}</Text>
+        captureAudio={false}
+      >
+        <View style={styles.overlay} />
+      </RNCamera>
+      <View style={styles.bottomOverlay}>
+        <TouchableOpacity onPress={() => setScanned(false)} style={styles.scanButton}>
+          <Text style={styles.scanButtonText}>Scan Again</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -26,14 +41,36 @@ const QRScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: 'black',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  scannedData: {
-    marginTop: 20,
-    fontSize: 16,
-    fontWeight: 'bold',
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  bottomOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 15,
+  },
+  scanButton: {
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+  },
+  scanButtonText: {
+    fontSize: 20,
+    color: '#000',
   },
 });
 
-export default QRScreen;
+export default QRScanner;

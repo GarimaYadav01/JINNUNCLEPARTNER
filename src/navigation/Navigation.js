@@ -14,8 +14,6 @@ import CallDetails from '../screen/callDetails/CallDetails';
 import Add from '../screen/callDetails/Add';
 import Change from '../screen/callDetails/Change';
 import QRScreen from '../compontent/QRScreen';
-
-
 const Stack = createNativeStackNavigator();
 const Navigation = () => {
     return (
