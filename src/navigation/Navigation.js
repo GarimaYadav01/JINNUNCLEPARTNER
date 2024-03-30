@@ -14,6 +14,7 @@ import CallDetails from '../screen/callDetails/CallDetails';
 import Add from '../screen/callDetails/Add';
 import Change from '../screen/callDetails/Change';
 import QRScreen from '../compontent/QRScreen';
+import Payment from '../screen/Profileflow/Payment';
 const Stack = createNativeStackNavigator();
 const Navigation = () => {
     return (
@@ -32,6 +33,7 @@ const Navigation = () => {
                 <Stack.Screen name="Add" component={Add} />
                 <Stack.Screen name="Change" component={Change} />
                 <Stack.Screen name="QRScreen" component={QRScreen} />
+                <Stack.Screen name="Payment" component={Payment} />
             </Stack.Navigator>
         </NavigationContainer>
     );

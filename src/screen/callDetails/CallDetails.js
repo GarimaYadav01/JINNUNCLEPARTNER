@@ -4,7 +4,6 @@ import Header from '../../compontent/Header';
 import Call from './Call';
 import Product from './Product';
 import Customer from './Customer';
-
 const { height, width } = Dimensions.get("screen")
 
 const CallDetails = () => {
@@ -36,9 +35,9 @@ const CallDetails = () => {
         }
     };
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
             <Header title={"3778384499"} showButton={true} buttonTitle="Start Work" />
-            <ScrollView>
+            <ScrollView style={{ flexGrow: 1, paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
                 <View style={styles.tabs}>
                     <TouchableOpacity onPress={() => setActiveTab("active")} style={[styles.tab, activeTab === "active" && styles.activeTab]}>
                         <Text style={styles.tabText}>Call Details</Text>
@@ -68,11 +67,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
-        marginTop: height * 0.03
+        marginTop: height * 0.03,
+
     },
     tab: {
         paddingVertical: 10,
-        paddingHorizontal: 40,
+        paddingHorizontal: 35,
     },
     tabText: {
         fontSize: 15,

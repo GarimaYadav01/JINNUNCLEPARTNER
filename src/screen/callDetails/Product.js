@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { View, FlatList, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-const { height, width } = Dimensions.get("screen")
-
+import React, { useState } from 'react';
+import { View, FlatList, Text, StyleSheet, Dimensions, TouchableOpacity, Button, Image, ScrollView } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
+const { height, width } = Dimensions.get("screen");
 const Product = () => {
     const navigation = useNavigation();
+    const [imageUri, setImageUri] = useState(null);
     const data = [
         {
             id: "1",
@@ -42,33 +43,60 @@ const Product = () => {
             subtitle: "--"
         }
     ];
-
+    const openCamera = () => {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            cropping: true,
+        }).then((image) => {
+            if (!image.cancelled) {
+                setImageUri(image.path);
+            }
+        }).catch((error) => {
+            console.log('Error:', error);
+        });
+    };
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.subtitle}>{item.subtitle}</Text>
         </View>
     );
-
     return (
-        <View style={styles.container}>
-            <View style={styles.con}>
-                <Text style={styles.text}>Take an action for this Product</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 10 }}>
-                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Change")}>
-                        <Text style={styles.text1}>Change</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Add")}>
-                        <Text style={styles.text1}>Add</Text>
+        <ScrollView style={{ flexGrow: 1, backgroundColor: "#FFF", paddingBottom: 50 }} showsVerticalScrollIndicator={false}>
+            <View style={styles.container}>
+                <View style={styles.con}>
+                    <Text style={styles.text}>Take an action for this Product</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 10 }}>
+                        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Change")}>
+                            <Text style={styles.text1}>Change</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Add")}>
+                            <Text style={styles.text1}>Add</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <FlatList
+                    data={data}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                />
+
+                <View style={styles.container}>
+
+                    {imageUri && (
+                        <View style={styles.imageContainer}>
+                            <Image source={{ uri: imageUri }} style={styles.image} />
+                        </View>
+                    )}
+                    {/* <Button title="Open Camera" onPress={openCamera} />
+                     */}
+                    <TouchableOpacity style={[styles.btn, { alignSelf: "center", marginTop: height * 0.03 }]} onPress={openCamera}>
+                        <Text style={styles.text1}>Open Camera</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <FlatList
-                data={data}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-            />
-        </View>
+        </ScrollView>
     );
 };
 
@@ -85,6 +113,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: "black"
     },
     subtitle: {
         fontSize: 16,
@@ -118,7 +147,15 @@ const styles = StyleSheet.create({
     text1: {
         color: "white",
         fontSize: 15
-    }
+    },
+    imageContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    image: {
+        width: 200,
+        height: 200,
+    },
 });
 
 export default Product;

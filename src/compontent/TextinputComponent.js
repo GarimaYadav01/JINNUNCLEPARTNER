@@ -1,9 +1,7 @@
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TextInput, Image, TouchableWithoutFeedback, Platform } from 'react-native';
-
 const { width, height } = Dimensions.get("screen");
-
 const TextinputComponent = ({ label, placeholder, secureTextEntry, inputType, onChangeText, value, onBlur }) => {
   let imageSource;
   switch (inputType) {
@@ -22,15 +20,12 @@ const TextinputComponent = ({ label, placeholder, secureTextEntry, inputType, on
     default:
       imageSource = null;
   }
-
   const [isPasswordVisible, setPasswordVisibility] = useState(false);
-
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!isPasswordVisible);
   };
 
   return (
-
     <Formik
       initialValues={{ [inputType]: '' }}
       // validationSchema={getValidationSchema()}

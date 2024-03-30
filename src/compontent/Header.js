@@ -1,12 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, SafeAreaView, Platform, StatusBar } from "react-native";
-
 const { height, width } = Dimensions.get("screen");
 
 const Header = ({ title, onBackPress, showButton, buttonTitle, onButtonPress }) => {
   const navigation = useNavigation();
-
   const handleBackPress = () => {
     if (onBackPress) {
       onBackPress();
@@ -14,7 +12,6 @@ const Header = ({ title, onBackPress, showButton, buttonTitle, onButtonPress }) 
       navigation.goBack();
     }
   };
-
   return (
     <SafeAreaView>
       {/* <StatusBar backgroundColor={"#FFF"} barStyle={"light-content"} /> */}
@@ -42,8 +39,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#004E8C",
     paddingHorizontal: 16,
     // height:height*0.095
-
-
   },
 
   iosContainer: {
@@ -65,7 +60,6 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.1,
     textAlign: "center",
     marginTop: 15
-    // backgroundColor:"red"
   },
   buttonContainer: {
     position: 'absolute',

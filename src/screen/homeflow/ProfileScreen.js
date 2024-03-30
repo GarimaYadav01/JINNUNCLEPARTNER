@@ -6,6 +6,7 @@ const { height, width } = Dimensions.get("screen")
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
+
     const [modalVisible, setModalVisible] = useState(false);
     const buttonData = [
         {
@@ -31,6 +32,12 @@ const ProfileScreen = () => {
             lable: "Mywallet",
             image: require("../../assets/Icon/chevronright.png"),
             screen: "MyWallet"
+        },
+        {
+            id: "5",
+            lable: "Payment & method",
+            image: require("../../assets/Icon/chevronright.png"),
+            screen: "Payment"
         },
     ]
 
@@ -62,7 +69,6 @@ const ProfileScreen = () => {
                     </View>
                     <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
                         <Text style={styles.label}>Logout</Text>
-
                     </TouchableOpacity>
                 </View>
             </ScrollView>
