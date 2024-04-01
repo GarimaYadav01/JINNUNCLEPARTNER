@@ -39,6 +39,12 @@ const ProfileScreen = () => {
             image: require("../../assets/Icon/chevronright.png"),
             screen: "Payment"
         },
+        {
+            id: "6",
+            lable: "History",
+            image: require("../../assets/Icon/chevronright.png"),
+            screen: "History"
+        },
     ]
 
     const handleMenuItemPress = (screen) => {

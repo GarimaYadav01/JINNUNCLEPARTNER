@@ -15,6 +15,7 @@ import Add from '../screen/callDetails/Add';
 import Change from '../screen/callDetails/Change';
 import QRScreen from '../compontent/QRScreen';
 import Payment from '../screen/Profileflow/Payment';
+import History from '../screen/homeflow/History';
 const Stack = createNativeStackNavigator();
 const Navigation = () => {
     return (
@@ -34,6 +35,7 @@ const Navigation = () => {
                 <Stack.Screen name="Change" component={Change} />
                 <Stack.Screen name="QRScreen" component={QRScreen} />
                 <Stack.Screen name="Payment" component={Payment} />
+                <Stack.Screen name="History" component={History} />
             </Stack.Navigator>
         </NavigationContainer>
     );
