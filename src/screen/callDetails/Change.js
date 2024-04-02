@@ -19,7 +19,6 @@ const Change = () => {
                     <View style={{ marginTop: height * 0.02 }}>
                         <CustomButton size={"large"} color={"white"} backgroundColor={"#004E8C"} label={"Save"} />
                     </View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>

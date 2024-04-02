@@ -5,7 +5,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 const { height, width } = Dimensions.get("screen");
 const Product = () => {
     const navigation = useNavigation();
-    const [imageUri, setImageUri] = useState(null);
+    const [imageUris, setImageUris] = useState([]);
     const data = [
         {
             id: "1",
@@ -50,7 +50,7 @@ const Product = () => {
             cropping: true,
         }).then((image) => {
             if (!image.cancelled) {
-                setImageUri(image.path);
+                setImageUris([...imageUris, image.path]);
             }
         }).catch((error) => {
             console.log('Error:', error);
@@ -60,6 +60,12 @@ const Product = () => {
         <View style={styles.item}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.subtitle}>{item.subtitle}</Text>
+        </View>
+    );
+
+    const renderImage = (uri) => (
+        <View style={styles.imageContainer}>
+            <Image source={{ uri }} style={styles.image} />
         </View>
     );
     return (
@@ -84,13 +90,10 @@ const Product = () => {
 
                 <View style={styles.container}>
 
-                    {imageUri && (
-                        <View style={styles.imageContainer}>
-                            <Image source={{ uri: imageUri }} style={styles.image} />
-                        </View>
-                    )}
-                    {/* <Button title="Open Camera" onPress={openCamera} />
-                     */}
+                    {imageUris.map((uri, index) => (
+                        renderImage(uri)
+                    ))}
+
                     <TouchableOpacity style={[styles.btn, { alignSelf: "center", marginTop: height * 0.03 }]} onPress={openCamera}>
                         <Text style={styles.text1}>Open Camera</Text>
                     </TouchableOpacity>
