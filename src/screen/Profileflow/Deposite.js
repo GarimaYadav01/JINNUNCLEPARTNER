@@ -25,25 +25,25 @@ const Deposite = () => {
 
     const data = [
         {
-            date: " april 7 2024,",
+            date: " april 7",
             status: "pending",
             amount: "₹100",
             balance: "₹100",
         },
         {
-            date: " april 7 2024,",
+            date: " april 9",
             status: "pending",
             amount: "₹100",
             balance: "₹100",
         },
         {
-            date: " april 7 2024,",
+            date: " april 8,",
             status: "pending",
             amount: "₹100",
             balance: "₹100",
         },
         {
-            date: " april 7 2024,",
+            date: " april 7 ",
             status: "pending",
             amount: "₹100",
             balance: "₹100",
@@ -52,13 +52,13 @@ const Deposite = () => {
 
     const renderItem = ({ item }) => (
         <View style={styles.itemContainer}>
-            <Text>{item.date}</Text>
+            <Text style={styles.textt2}>{item.date}</Text>
             <TouchableOpacity style={styles.btn}>
                 <Text>{item.status}</Text>
             </TouchableOpacity>
 
-            <Text> {item.amount}</Text>
-            <Text> {item.balance}</Text>
+            <Text style={styles.textt2}> {item.amount}</Text>
+            <Text style={styles.textt2}> {item.balance}</Text>
         </View>
     );
 
@@ -95,7 +95,7 @@ const Deposite = () => {
             <FlatList
                 data={data}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()} // Use index as key, assuming data items are unique
+                keyExtractor={(item, index) => index.toString()}
             />
 
         </View>
@@ -144,10 +144,10 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     text: {
-        fontSize: 17,
+        fontSize: 16,
         color: "black",
         fontWeight: "bold",
-        marginLeft: 20
+        marginLeft: 17
     },
     itemContainer: {
         flexDirection: "row",
@@ -158,6 +158,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         marginHorizontal: 10
 
+    },
+    textt2: {
+        fontSize: 14,
+        color: "gray"
     }
 });
 

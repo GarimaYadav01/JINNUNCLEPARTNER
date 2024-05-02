@@ -9,13 +9,13 @@ const { height, width } = Dimensions.get("screen")
 
 const LoginScreen = () => {
     const navigation = useNavigation();
-    const [phoneNumber, setPhoneNumber] = useState('');
     const validationSchema = Yup.object().shape({
-        phoneNumber: Yup.string()
-            .required("Phone number is required")
-            .matches(/^[0-9]+$/, 'Must be only digits')
-            .min(10, 'Must be at least 10 characters')
-            .max(15, 'Must not exceed 15 characters'),
+        email: Yup.string()
+            .email('Invalid email')
+            .required('Email is required'),
+        password: Yup.string()
+            .required('Password is required')
+            .min(6, 'Password must be at least 6 characters'),
     });
     return (
         <SafeAreaView>
@@ -37,40 +37,37 @@ const LoginScreen = () => {
                         </View>
                     </View>
                     <Formik
-                        initialValues={{ phoneNumber: '' }}
-                        // validationSchema={validationSchema}
+                        initialValues={{ email: '', password: '' }}
+                        validationSchema={validationSchema}
                         onSubmit={(values, actions) => {
-                            navigation.navigate("Otp")
-                            // handleLogin(values); // Pass the values object containing the form field values
+                            // Handle form submission
+                            actions.resetForm(); // Reset form after submission
                         }}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                             <View style={styles.contain}>
-                                {/* <View style={styles.container2}>
-                                    <View style={{ columnGap: 10, flexDirection: "row" }}>
-                                        <Image source={require("../../assets/Icon/Flag.png")} style={{ height: 20, width: 20, borderRadius: 10 }} />
-                                        <Text>+91</Text>
-                                    </View>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Enter your phone number"
-                                        keyboardType="phone-pad"
-                                        placeholderTextColor={"gray"}
-                                        maxLength={10}
-                                        value={phoneNumber}
-                                        onChangeText={(value) => {
-                                            handleChange('phoneNumber')(value);
-                                            setPhoneNumber(value);
-                                        }}
-                                        name="phoneNumber"
-                                    />
-                                </View> */}
-                                {/* {touched.phoneNumber && errors.phoneNumber &&
-                                    <Text style={styles.error}>{errors.phoneNumber}</Text>
-                                } */}
+                                <TextinputComponent
+                                    label={"Email"}
+                                    placeholder={"Enter your email."}
+                                    inputType={"email"}
+                                    onChangeText={handleChange('email')}
+                                    onBlur={handleBlur('email')}
+                                    value={values.email}
+                                    error={touched.email && errors.email}
+                                />
+                                <Text style={styles.error}>{touched.email && errors.email}</Text>
 
-                                <TextinputComponent label={"Email"} placeholder={"Enter your email."} inputType={"email"} />
-                                <TextinputComponent label={"Password"} placeholder={"Enter your password."} inputType={"password"} />
+                                <TextinputComponent
+                                    label={"Password"}
+                                    placeholder={"Enter your password."}
+                                    inputType={"password"}
+                                    onChangeText={handleChange('password')}
+                                    onBlur={handleBlur('password')}
+                                    value={values.password}
+                                    error={touched.password && errors.password}
+                                />
+                                <Text style={styles.error}>{touched.password && errors.password}</Text>
+
                                 <View style={{ marginTop: height * 0.03 }}>
                                     <CustomButton
                                         label={"Verify phone number"}

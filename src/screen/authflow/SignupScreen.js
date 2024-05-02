@@ -6,9 +6,31 @@ import CustomButton from "../../compontent/Custombutton";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 const { height, width } = Dimensions.get("screen")
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 const SignupScreen = () => {
     const navigation = useNavigation();
+    const validationSchema = Yup.object().shape({
+        email: Yup.string()
+            .email('Invalid email')
+            .required('Email is required'),
+        password: Yup.string()
+            .required('Password is required')
+            .min(6, 'Password must be at least 6 characters'),
+        technicianName: Yup.string()
+            .required('Technician name is required'),
+        phoneNumber: Yup.string()
+            .required('Phone number is required')
+            .matches(/^[0-9]+$/, 'Must be only digits')
+            .min(10, 'Must be at least 10 characters')
+            .max(15, 'Must not exceed 15 characters'),
+        dealerName: Yup.string()
+            .required('Dealer name is required'),
+        technicianType: Yup.string()
+            .required('Technician type is required'),
+    });
+
     const data = [
         { label: 'Ac Repair', value: '1' },
         { label: 'WashingMachine Repair', value: '2' },
@@ -29,38 +51,71 @@ const SignupScreen = () => {
             <View style={{ alignItems: "center", marginVertical: height * 0.02 }}>
                 <Image source={require("../../assets/bottomnavigatiomnimage/user5.png")} resizeMode="comtain" style={{ width: 150, height: 150 }} />
             </View>
-            <ScrollView style={{ flex: 1, paddingBottom: 50 }}>
-                <View style={{ marginHorizontal: 16, justifyContent: "center", marginVertical: 10 }}>
-                    <TextinputComponent label={"Email"} placeholder={"Enter your email."} inputType={"email"} />
-                    <TextinputComponent label={"Password"} placeholder={"Enter your password."} inputType={"password"} />
-                    <TextinputComponent label={"Technician Name"} placeholder={"Enter your name."} inputType={"person"} />
-                    <TextinputComponent label={"Phone number"} placeholder={"Enter your phone number."} inputType={"phone"} />
-                    <TextinputComponent label={"Dealer Name"} placeholder={"Enter your Dealer Name."} inputType={"person"} />
-                    <Text style={styles.textInputLabel}>Technician Type</Text>
-                    <View style={styles.container}>
-                        <Dropdown
-                            style={[styles.dropdown,]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={data}
-                            search
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={!isFocus ? 'Select item' : '...'}
-                            searchPlaceholder="Search..."
-                            value={value}
-                            onFocus={() => setIsFocus(true)}
-                            onBlur={() => setIsFocus(false)}
-                            onChange={item => {
-                                setValue(item.value);
-                                setIsFocus(false);
-                            }}
-                        />
-                    </View>
-                </View>
+            <ScrollView style={{ flexGrow: 1, paddingBottom: 100 }}>
+                <Formik
+                    initialValues={{ email: '', password: '', technicianName: '', phoneNumber: '', dealerName: '', technicianType: null }}
+                    validationSchema={validationSchema}
+                    onSubmit={(values, actions) => {
+                        // Handle form submission
+                        actions.resetForm(); // Reset form after submission
+                    }}
+                >
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                        <View style={{ marginHorizontal: 16, justifyContent: "center", marginVertical: 10 }}>
+                            <TextinputComponent
+                                label={"Email"}
+                                placeholder={"Enter your email."}
+                                inputType={"email"}
+                                onChangeText={handleChange('email')}
+                                onBlur={handleBlur('email')}
+                                value={values.email}
+                                error={touched.email && errors.email}
+                            />
+                            <Text style={styles.error}>{touched.email && errors.email}</Text>
+                            <TextinputComponent label={"Password"} placeholder={"Enter your password."} inputType={"password"} onChangeText={handleChange('email')}
+                                onBlur={handleBlur('password')}
+                                value={values.password}
+                                error={touched.password && errors.password} />
+                            <Text style={styles.error}>{touched.password && errors.password}</Text>
+                            <TextinputComponent label={"Technician Name"} placeholder={"Enter your name."} inputType={"person"} onChangeText={handleChange('technicianName')}
+                                onBlur={handleBlur('technicianName')}
+                                value={values.technicianName}
+                                error={touched.technicianName && errors.technicianName} />
+                            <Text style={styles.error}>{touched.technicianName && errors.technicianName}</Text>
+                            <TextinputComponent label={"Phone number"} placeholder={"Enter your phone number."} inputType={"phone"} onChangeText={handleChange('phoneNumber')}
+                                onBlur={handleBlur('phoneNumber')}
+                                value={values.phoneNumber}
+                                error={touched.phoneNumber && errors.phoneNumber} />
+                            <TextinputComponent label={"Dealer Name"} placeholder={"Enter your Dealer Name."} inputType={"person"} onChangeText={handleChange('phoneNumber')} onBlur={handleBlur('phoneNumber')}
+                                value={values.phoneNumber}
+                                error={touched.phoneNumber && errors.phoneNumber} />
+                            <Text style={styles.textInputLabel}>Technician Type</Text>
+                            <View style={styles.container}>
+                                <Dropdown
+                                    style={[styles.dropdown,]}
+                                    placeholderStyle={styles.placeholderStyle}
+                                    selectedTextStyle={styles.selectedTextStyle}
+                                    inputSearchStyle={styles.inputSearchStyle}
+                                    iconStyle={styles.iconStyle}
+                                    data={data}
+                                    search
+                                    maxHeight={300}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={!isFocus ? 'Select item' : '...'}
+                                    searchPlaceholder="Search..."
+                                    value={value}
+                                    onFocus={() => setIsFocus(true)}
+                                    onBlur={() => setIsFocus(false)}
+                                    onChange={item => {
+                                        setValue(item.value);
+                                        setIsFocus(false);
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    )}
+                </Formik>
                 <CustomButton size={"large"} backgroundColor={"#004E8C"} color={"white"} label={"Continue"} onPress={() => navigation.navigate("LoginScreen")} />
                 <View style={{ alignItems: "center" }}><Text style={{ color: "black", fontSize: 18, marginTop: 10 }}>I have already Account ?<Text style={{ color: "#004E8C" }} onPress={() => navigation.navigate("SignupScreen")}> Login</Text></Text></View>
             </ScrollView>
