@@ -17,6 +17,28 @@ const LoginScreen = () => {
             .required('Password is required')
             .min(6, 'Password must be at least 6 characters'),
     });
+    const handleLogin = async () => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
+            myHeaders.append("Cookie", "ci_session=1e6a37ca8131b6b9695408e0d618ec9f93e8f3ea");
+
+            const formdata = new FormData();
+            formdata.append("country_code", "+91");
+            formdata.append("mobile", "1234567890");
+            formdata.append("device_id", "654654654");
+            formdata.append("firebase_token", "f5s6a4f65as4f654sa56f4sa65fsaafafafa");
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+        } catch (error) {
+            console.log("error---->", error)
+        }
+    }
     return (
         <SafeAreaView>
             <ScrollView>
@@ -29,7 +51,6 @@ const LoginScreen = () => {
                             </Text>
                             <Text style={styles.header}>
                                 Jinnuncle
-
                             </Text>
                             <Text style={styles.header}>Panter</Text>
                             <Text style={styles.text}>Your Home Service Expert</Text>
@@ -40,7 +61,7 @@ const LoginScreen = () => {
                         initialValues={{ email: '', password: '' }}
                         validationSchema={validationSchema}
                         onSubmit={(values, actions) => {
-                            // Handle form submission
+                            navigation.navigate("Otp")
                             actions.resetForm(); // Reset form after submission
                         }}
                     >
@@ -56,7 +77,6 @@ const LoginScreen = () => {
                                     error={touched.email && errors.email}
                                 />
                                 <Text style={styles.error}>{touched.email && errors.email}</Text>
-
                                 <TextinputComponent
                                     label={"Password"}
                                     placeholder={"Enter your password."}
@@ -80,7 +100,6 @@ const LoginScreen = () => {
                             </View>
                         )}
                     </Formik>
-
                     <View><Text style={{ color: "black", fontSize: 18, marginTop: 10 }}> Don't have an Account? <Text style={{ color: "#004E8C" }} onPress={() => navigation.navigate("SignupScreen")}> Signup</Text> </Text></View>
                 </View>
             </ScrollView>
