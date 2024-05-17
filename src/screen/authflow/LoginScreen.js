@@ -5,6 +5,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import TextinputComponent from '../../compontent/TextinputComponent';
+import { Loginapi } from '../apiconfig/Apiconfig';
+import { showMessage } from 'react-native-flash-message';
 const { height, width } = Dimensions.get("screen")
 
 const LoginScreen = () => {
@@ -17,24 +19,40 @@ const LoginScreen = () => {
             .required('Password is required')
             .min(6, 'Password must be at least 6 characters'),
     });
-    const handleLogin = async () => {
+    const handleLogin = async (values) => {
         try {
             const myHeaders = new Headers();
             myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
-            myHeaders.append("Cookie", "ci_session=1e6a37ca8131b6b9695408e0d618ec9f93e8f3ea");
-
+            myHeaders.append("Cookie", "ci_session=88c75d94ab3027c19a784b215bbd329c84721541");
             const formdata = new FormData();
-            formdata.append("country_code", "+91");
-            formdata.append("mobile", "1234567890");
+            formdata.append("email", values.email); // Use values.email from Formik
+            formdata.append("password", values.password); // Use values.password from Formik
             formdata.append("device_id", "654654654");
             formdata.append("firebase_token", "f5s6a4f65as4f654sa56f4sa65fsaafafafa");
-
             const requestOptions = {
                 method: "POST",
                 headers: myHeaders,
                 body: formdata,
                 redirect: "follow"
             };
+            const response = await fetch(Loginapi, requestOptions);
+            const result = await response.text();
+            console.log("result------>", result)
+            if (response.status == 200) {
+                showMessage({
+                    message: "Login successfully",
+                    type: "success",
+                    icon: "success"
+                });
+                navigation.navigate("Otp")
+            } else if (response.status == 400) {
+                showMessage({
+                    message: "Wrong Email\/Mobile..",
+                    type: "danger",
+                    icon: "danger"
+                })
+            }
+
         } catch (error) {
             console.log("error---->", error)
         }
@@ -61,8 +79,9 @@ const LoginScreen = () => {
                         initialValues={{ email: '', password: '' }}
                         validationSchema={validationSchema}
                         onSubmit={(values, actions) => {
-                            navigation.navigate("Otp")
-                            actions.resetForm(); // Reset form after submission
+                            handleLogin(values);
+                            // navigation.navigate("Otp")
+                            // actions.resetForm(); // Reset form after submission
                         }}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

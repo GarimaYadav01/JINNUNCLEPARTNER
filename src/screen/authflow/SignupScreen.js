@@ -8,8 +8,52 @@ import { Dropdown } from "react-native-element-dropdown";
 const { height, width } = Dimensions.get("screen")
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { Signup } from "../apiconfig/Apiconfig";
+import { showMessage } from "react-native-flash-message";
 
 const SignupScreen = () => {
+    const handleSubmitregistor = async (values) => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("token", "YourTokenHere");
+            myHeaders.append("Cookie", "ci_session=YourSessionHere");
+            const formdata = new FormData();
+            formdata.append("name", values.technicianName);
+            formdata.append("email", values.email);
+            formdata.append("mobile", values.phoneNumber);
+            formdata.append("dealer_name", values.dealerName);
+            formdata.append("technician_type", values.technicianType);
+            formdata.append("password", values.password);
+            formdata.append("cpassword", values.password);
+            formdata.append("device_id", "522623623623");
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+            const response = await fetch(Signup, requestOptions);
+            const result = await response.json();
+            console.log("result--wwwww---->", result);
+            if (result.status === 200) {
+                showMessage({
+                    message: "Signup successful",
+                    icon: "success",
+                    type: "success"
+                });
+            } else if (result.status === 400) {
+                showMessage({
+                    message: "This Email is already in use",
+                    type: "danger",
+                    icon: "danger",
+                });
+            }
+        } catch (error) {
+            console.log("resultresult------>", error);
+        }
+    };
+
+
     const navigation = useNavigation();
     const validationSchema = Yup.object().shape({
         email: Yup.string()
@@ -51,12 +95,21 @@ const SignupScreen = () => {
             <View style={{ alignItems: "center", marginVertical: height * 0.02 }}>
                 <Image source={require("../../assets/bottomnavigatiomnimage/user5.png")} resizeMode="comtain" style={{ width: 150, height: 150 }} />
             </View>
-            <ScrollView style={{ flexGrow: 1, paddingBottom: 100 }}>
+            <ScrollView style={{ flexGrow: 1, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
                 <Formik
                     initialValues={{ email: '', password: '', technicianName: '', phoneNumber: '', dealerName: '', technicianType: null }}
                     validationSchema={validationSchema}
                     onSubmit={(values, actions) => {
-                        // Handle form submission
+                        // Check if technicianType is selected
+                        if (!values.technicianType) {
+                            showMessage({
+                                message: "Please select a technician type",
+                                type: "danger",
+                                icon: "danger",
+                            });
+                            return; // Prevent form submission if dropdown value is null
+                        }
+                        handleSubmitregistor(values);
                         actions.resetForm(); // Reset form after submission
                     }}
                 >
@@ -72,23 +125,41 @@ const SignupScreen = () => {
                                 error={touched.email && errors.email}
                             />
                             <Text style={styles.error}>{touched.email && errors.email}</Text>
-                            <TextinputComponent label={"Password"} placeholder={"Enter your password."} inputType={"password"} onChangeText={handleChange('email')}
+                            <TextinputComponent label={"Password"}
+                                placeholder={"Enter your password."}
+                                inputType={"password"}
+                                onChangeText={handleChange('password')}
                                 onBlur={handleBlur('password')}
                                 value={values.password}
                                 error={touched.password && errors.password} />
                             <Text style={styles.error}>{touched.password && errors.password}</Text>
-                            <TextinputComponent label={"Technician Name"} placeholder={"Enter your name."} inputType={"person"} onChangeText={handleChange('technicianName')}
+                            <TextinputComponent
+                                label={"Technician Name"}
+                                placeholder={"Enter your name."}
+                                inputType={"person"}
+                                onChangeText={handleChange('technicianName')}
                                 onBlur={handleBlur('technicianName')}
                                 value={values.technicianName}
                                 error={touched.technicianName && errors.technicianName} />
                             <Text style={styles.error}>{touched.technicianName && errors.technicianName}</Text>
-                            <TextinputComponent label={"Phone number"} placeholder={"Enter your phone number."} inputType={"phone"} onChangeText={handleChange('phoneNumber')}
+                            <TextinputComponent
+                                label={"Phone number"}
+                                placeholder={"Enter your phone number."}
+                                inputType={"phone"}
+                                onChangeText={handleChange('phoneNumber')}
                                 onBlur={handleBlur('phoneNumber')}
                                 value={values.phoneNumber}
                                 error={touched.phoneNumber && errors.phoneNumber} />
-                            <TextinputComponent label={"Dealer Name"} placeholder={"Enter your Dealer Name."} inputType={"person"} onChangeText={handleChange('phoneNumber')} onBlur={handleBlur('phoneNumber')}
-                                value={values.phoneNumber}
-                                error={touched.phoneNumber && errors.phoneNumber} />
+                            <Text style={styles.error}>{touched.phoneNumber && errors.phoneNumber}</Text>
+                            <TextinputComponent
+                                label={"Dealer Name"}
+                                placeholder={"Enter your Dealer Name."}
+                                inputType={"person"}
+                                onChangeText={handleChange('dealerName')}
+                                onBlur={handleBlur('dealerName')}
+                                value={values.dealerName}
+                                error={touched.dealerName && errors.dealerName} />
+                            <Text style={styles.error}>{touched.dealerName && errors.dealerName}</Text>
                             <Text style={styles.textInputLabel}>Technician Type</Text>
                             <View style={styles.container}>
                                 <Dropdown
@@ -110,13 +181,19 @@ const SignupScreen = () => {
                                     onChange={item => {
                                         setValue(item.value);
                                         setIsFocus(false);
+
+                                        // touched.technicianType = true;
                                     }}
                                 />
                             </View>
+                            {/* {touched.technicianType && errors.technicianType && (
+                                <Text style={styles.error}>{errors.technicianType}</Text>
+                            )} */}
+                            <CustomButton size={"large"} backgroundColor={"#004E8C"} color={"white"} label={"Continue"} onPress={handleSubmit} />
                         </View>
                     )}
                 </Formik>
-                <CustomButton size={"large"} backgroundColor={"#004E8C"} color={"white"} label={"Continue"} onPress={() => navigation.navigate("LoginScreen")} />
+
                 <View style={{ alignItems: "center" }}><Text style={{ color: "black", fontSize: 18, marginTop: 10 }}>I have already Account ?<Text style={{ color: "#004E8C" }} onPress={() => navigation.navigate("SignupScreen")}> Login</Text></Text></View>
             </ScrollView>
         </SafeAreaView>
@@ -161,6 +238,7 @@ const styles = StyleSheet.create({
     },
     selectedTextStyle: {
         fontSize: 16,
+        color: "black"
     },
     iconStyle: {
         width: 20,
@@ -176,4 +254,7 @@ const styles = StyleSheet.create({
         // marginBottom: height * 0.02,
         marginTop: 10
     },
+    error: {
+        color: "red"
+    }
 });

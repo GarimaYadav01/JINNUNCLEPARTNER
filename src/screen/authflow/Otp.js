@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 // import { showMessage } from 'react-native-flash-message';
 // import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { Otpapi } from '../apiconfig/Apiconfig';
+import { showMessage } from 'react-native-flash-message';
 // import LoaderScreen from '../../compontent/LoaderScreen';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { Resendotp, otpverify } from '../../apiconfig/Apiconfig';
@@ -27,58 +29,48 @@ const Otp = (props) => {
         setCode(code);
         setIsCodeEntered(true);
     };
-    // const handleVerfiotp = async () => {
-    //     const formdata = new FormData();
-    //     formdata.append("mobile", phoneNumber);
-    //     formdata.append("type", "2");
-    //     formdata.append("otp", code);
-    //     setIsLoading(true);
+    const handleVerfiotp = async () => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
+            myHeaders.append("Cookie", "ci_session=0157221467006198ab621aa3bae56914cf2abee0");
+            const formdata = new FormData();
+            formdata.append("email", "shahrukh@gmail.com");
+            formdata.append("otp1", "1");
+            formdata.append("otp2", "2");
+            formdata.append("otp3", "3");
+            formdata.append("otp4", "4");
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+            const response = await fetch(Otpapi, requestOptions);
+            const responseText = await response.text(); // Get raw response text
+            console.log("Raw response text: ", responseText); // Log raw response text
 
-    //     fetch(otpverify, {
-    //         method: 'POST',
-    //         body: formdata,
-    //     })
-    //         .then((response) => {
-    //             if (response.ok) {
-    //                 return response.json();
-    //             } else {
-    //                 throw new Error('Network response was not ok');
-    //             }
-    //         })
-    //         .then(async (json) => {
-    //             console.log("jdkfdlk---->", json.status);
-    //             if (json.status == 200) {
-    //                 setIsLoading(false);
+            const result = JSON.parse(responseText); // Parse response as JSON
+            console.log("result--otp---->", result);
 
-    //                 // Set the access token in AsyncStorage
-    //                 await AsyncStorage.setItem('token', json.data.access_token);
-    //                 console.log("dffbdmf--->", json.data.access_token)
+            if (result.status === 200) {
+                showMessage({
+                    message: "Otp verified successfully",
+                    type: "success",
+                    icon: "success"
+                });
+            } else {
+                showMessage({
+                    message: "Otp verification failed",
+                    type: "danger",
+                    icon: "danger"
+                });
+            }
+        } catch (error) {
+            console.log("error---->", error);
+        }
+    };
 
-    //                 showMessage({
-    //                     message: json.message,
-    //                     type: 'success',
-    //                     icon: 'success'
-    //                 });
-    //                 navigation.navigate('Location');
-    //             } else {
-    //                 showMessage({
-    //                     message: json.message,
-    //                     type: "warning",
-    //                     icon: "warning"
-    //                 });
-    //                 setIsLoading(false);
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error(error);
-    //             showMessage({
-    //                 message: 'An error occurred. Please try again.',
-    //                 type: "warning",
-    //                 icon: "warning"
-    //             });
-    //             setIsLoading(false);
-    //         });
-    // };
 
     // const handleResendOTP = async () => {
     //     try {
@@ -104,6 +96,10 @@ const Otp = (props) => {
     //         console.error(error);
     //     }
     // };
+
+
+
+
     const [timer, setTimer] = useState(180);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [isResendVisible, setIsResendVisible] = useState(true);
@@ -177,8 +173,8 @@ const Otp = (props) => {
                 <CustomButton
                     size={"large"}
                     label={"Continue"}
-                    onPress={() => navigation.navigate("Bottomnavigation")}
-                    // onPress={handleVerfiotp}
+                    // onPress={() => navigation.navigate("Bottomnavigation")}
+                    onPress={handleVerfiotp}
                     backgroundColor={isCodeEntered ? "#004E8C" : "white"}
                     color={isCodeEntered ? "white" : "#004E8C"}
                     disabled={!isCodeEntered}
