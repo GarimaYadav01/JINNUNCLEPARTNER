@@ -8,6 +8,11 @@ export const logoutapi = serverl + "auth/logout"
 export const Deleteapi = serverl + "user/delete_account"
 export const getlocation = serverl + "user/get_current_location"
 export const Signup = serverl + "auth/sign_up"
+export const techniciantyp = serverl + "technician_type/index"
+export const profile_detail = serverl + "user/profile_detail"
+export const changepassword = serverl + "user/password_update"
+export const helpancontact = serverl + "user/partner_enquiry"
+
 
 
 

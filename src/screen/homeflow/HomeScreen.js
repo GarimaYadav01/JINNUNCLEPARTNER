@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import Crad from "../Profileflow/Crad";
+import { useNavigationState } from "@react-navigation/native";
+import AuthContext from "../authcontext/Authcontext";
 const { height, width } = Dimensions.get("screen")
 const HomeScreen = () => {
     const [activeTab, setActiveTab] = useState("active");
+    const { gethandleprofile } = useContext(AuthContext);
+    useEffect(() => {
+        gethandleprofile();
+    }, [])
     const renderTabContent = () => {
         switch (activeTab) {
             case "active":

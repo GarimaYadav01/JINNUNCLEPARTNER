@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Header from "../../compontent/Header";
 import TextinputComponent from "../../compontent/TextinputComponent";
 import CustomButton from "../../compontent/Custombutton";
@@ -8,15 +8,69 @@ import { Dropdown } from "react-native-element-dropdown";
 const { height, width } = Dimensions.get("screen")
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Signup } from "../apiconfig/Apiconfig";
+import { Signup, techniciantyp } from "../apiconfig/Apiconfig";
 import { showMessage } from "react-native-flash-message";
-
+import ImagePicker from 'react-native-image-crop-picker';
 const SignupScreen = () => {
+    const [istechni, setIstechni] = useState([]);
+    console.log("dhshdhddhd-->", istechni)
+    const [isLoading, setIsLoading] = useState(false);
+    const [profileImage, setProfileImage] = useState(require('../../assets/bottomnavigatiomnimage/user5.png'));
+    const openImagePicker = () => {
+        Alert.alert(
+            'Select Image Source',
+            'Choose an option to select an image',
+            [
+                {
+                    text: 'Camera',
+                    onPress: () => openImageSource('camera'),
+                },
+                {
+                    text: 'Gallery',
+                    onPress: () => openImageSource('gallery'),
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: true }
+        );
+    };
+
+    const openImageSource = (source) => {
+        const options = {
+            width: 300,
+            height: 400,
+            cropping: true,
+        };
+
+        if (source === 'camera') {
+            ImagePicker.openCamera(options)
+                .then((image) => {
+                    if (image.path) {
+                        setProfileImage({ uri: image.path });
+                    }
+                })
+                .catch((error) => {
+                    console.log('Error:', error);
+                });
+        } else if (source === 'gallery') {
+            ImagePicker.openPicker(options)
+                .then((image) => {
+                    if (image.path) {
+                        setProfileImage({ uri: image.path });
+                    }
+                })
+                .catch((error) => {
+                    console.log('Error:', error);
+                });
+        }
+    };
+
+
     const handleSubmitregistor = async (values) => {
         try {
-            const myHeaders = new Headers();
-            myHeaders.append("token", "YourTokenHere");
-            myHeaders.append("Cookie", "ci_session=YourSessionHere");
             const formdata = new FormData();
             formdata.append("name", values.technicianName);
             formdata.append("email", values.email);
@@ -25,23 +79,22 @@ const SignupScreen = () => {
             formdata.append("technician_type", values.technicianType);
             formdata.append("password", values.password);
             formdata.append("cpassword", values.password);
-            formdata.append("device_id", "522623623623");
+            // formdata.append("device_id", "522623623623");
             const requestOptions = {
                 method: "POST",
-                headers: myHeaders,
                 body: formdata,
                 redirect: "follow"
             };
             const response = await fetch(Signup, requestOptions);
             const result = await response.json();
             console.log("result--wwwww---->", result);
-            if (result.status === 200) {
+            if (result.status == 200) {
                 showMessage({
                     message: "Signup successful",
                     icon: "success",
                     type: "success"
                 });
-            } else if (result.status === 400) {
+            } else if (result.status == 400) {
                 showMessage({
                     message: "This Email is already in use",
                     type: "danger",
@@ -75,6 +128,32 @@ const SignupScreen = () => {
             .required('Technician type is required'),
     });
 
+    const gethandletrafer = async () => {
+        try {
+            setIsLoading(false);
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow"
+            };
+            const response = await fetch(techniciantyp, requestOptions);
+            const result = await response.json();
+            if (result.status == 200) {
+                console.log("result---->", result)
+                setIstechni(result.data)
+                setIsLoading(false);
+                console.log("result.data-------->", result.data)
+
+            }
+        } catch (error) {
+            console.log("error----->", error)
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        gethandletrafer();
+    }, [])
+
     const data = [
         { label: 'Ac Repair', value: '1' },
         { label: 'WashingMachine Repair', value: '2' },
@@ -93,11 +172,13 @@ const SignupScreen = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
             <Header title={"Signup"} />
             <View style={{ alignItems: "center", marginVertical: height * 0.02 }}>
-                <Image source={require("../../assets/bottomnavigatiomnimage/user5.png")} resizeMode="comtain" style={{ width: 150, height: 150 }} />
+                <TouchableOpacity onPress={openImagePicker}>
+                    <Image source={require("../../assets/bottomnavigatiomnimage/user5.png")} resizeMode="comtain" style={{ width: 150, height: 150 }} />
+                </TouchableOpacity>
             </View>
             <ScrollView style={{ flexGrow: 1, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
                 <Formik
-                    initialValues={{ email: '', password: '', technicianName: '', phoneNumber: '', dealerName: '', technicianType: null }}
+                    initialValues={{ email: '', password: '', technicianName: '', phoneNumber: '', dealerName: '', technicianType: null, }}
                     validationSchema={validationSchema}
                     onSubmit={(values, actions) => {
                         // Check if technicianType is selected
@@ -110,10 +191,11 @@ const SignupScreen = () => {
                             return; // Prevent form submission if dropdown value is null
                         }
                         handleSubmitregistor(values);
-                        actions.resetForm(); // Reset form after submission
+                        console.log("values--->", values)
+                        // actions.resetForm(); // Reset form after submission
                     }}
                 >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                         <View style={{ marginHorizontal: 16, justifyContent: "center", marginVertical: 10 }}>
                             <TextinputComponent
                                 label={"Email"}
@@ -168,27 +250,22 @@ const SignupScreen = () => {
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
                                     iconStyle={styles.iconStyle}
-                                    data={data}
+                                    data={istechni}
                                     search
                                     maxHeight={300}
-                                    labelField="label"
-                                    valueField="value"
+                                    labelField="name"
+                                    valueField="id"
                                     placeholder={!isFocus ? 'Select item' : '...'}
                                     searchPlaceholder="Search..."
                                     value={value}
                                     onFocus={() => setIsFocus(true)}
                                     onBlur={() => setIsFocus(false)}
                                     onChange={item => {
-                                        setValue(item.value);
-                                        setIsFocus(false);
-
-                                        // touched.technicianType = true;
+                                        setFieldValue('technicianType', item.id);
                                     }}
                                 />
                             </View>
-                            {/* {touched.technicianType && errors.technicianType && (
-                                <Text style={styles.error}>{errors.technicianType}</Text>
-                            )} */}
+                            <Text style={styles.error}>{touched.technicianType && errors.technicianType}</Text>
                             <CustomButton size={"large"} backgroundColor={"#004E8C"} color={"white"} label={"Continue"} onPress={handleSubmit} />
                         </View>
                     )}

@@ -16,7 +16,7 @@ const Payment = ({ isVisible, hideModal, handleSave, onClose }) => {
     return (
         <SafeAreaView style={{ flex: 1,  }}>
 
-            <Header title={"payment & card"} />
+            <Header title={"payment & card"} showButton={true} />
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1,  }}>
                 <View style={styles.modalContent}>

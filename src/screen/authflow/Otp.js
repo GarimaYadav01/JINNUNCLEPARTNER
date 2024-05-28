@@ -5,35 +5,22 @@ import CustomButton from '../../compontent/Custombutton';
 import CodeInput from 'react-native-code-input';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-// import { showMessage } from 'react-native-flash-message';
-// import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { Otpapi } from '../apiconfig/Apiconfig';
 import { showMessage } from 'react-native-flash-message';
-// import LoaderScreen from '../../compontent/LoaderScreen';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { Resendotp, otpverify } from '../../apiconfig/Apiconfig';
-// import AsyncStorage from 'react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get("screen")
 
 const Otp = (props) => {
-    // const phoneNumber = props?.route?.params?.phoneNumber;
-    // console.log("Phone Number-->", props?.route?.params?.phoneNumber);
-    // console.log("Route Params:", props.route.params);
     const [code, setCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isCodeEntered, setIsCodeEntered] = useState(false);
     const navigation = useNavigation();
-
     const onCodeFilled = (code) => {
         setCode(code);
         setIsCodeEntered(true);
     };
     const handleVerfiotp = async () => {
         try {
-            const myHeaders = new Headers();
-            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
-            myHeaders.append("Cookie", "ci_session=0157221467006198ab621aa3bae56914cf2abee0");
             const formdata = new FormData();
             formdata.append("email", "shahrukh@gmail.com");
             formdata.append("otp1", "1");
@@ -42,28 +29,18 @@ const Otp = (props) => {
             formdata.append("otp4", "4");
             const requestOptions = {
                 method: "POST",
-                headers: myHeaders,
                 body: formdata,
                 redirect: "follow"
             };
             const response = await fetch(Otpapi, requestOptions);
-            const responseText = await response.text(); // Get raw response text
-            console.log("Raw response text: ", responseText); // Log raw response text
-
-            const result = JSON.parse(responseText); // Parse response as JSON
+            const result = await response.json();
             console.log("result--otp---->", result);
 
-            if (result.status === 200) {
+            if (response.status === 200) {
                 showMessage({
                     message: "Otp verified successfully",
                     type: "success",
                     icon: "success"
-                });
-            } else {
-                showMessage({
-                    message: "Otp verification failed",
-                    type: "danger",
-                    icon: "danger"
                 });
             }
         } catch (error) {

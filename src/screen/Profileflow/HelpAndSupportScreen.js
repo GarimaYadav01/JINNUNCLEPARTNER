@@ -1,47 +1,122 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Dimensions } from "react-native";
+import { SafeAreaView, View, Text, TextInput, StyleSheet, Dimensions } from "react-native";
 import Header from "../../compontent/Header";
 import CustomButton from "../../compontent/Custombutton";
+import TextinputComponent from "../../compontent/TextinputComponent";
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { useNavigation } from "@react-navigation/native";
+import { helpancontact } from "../apiconfig/Apiconfig";
+import { showMessage } from "react-native-flash-message";
+
 const { height, width } = Dimensions.get("screen")
 
-
 const HelpAndSupportScreen = () => {
-    const [message, setMessage] = useState("");
+    const navigation = useNavigation();
 
-    const handleSendMessage = () => {
-        // Here you can implement the logic to send the message to the admin
-        if (message.trim() === "") {
-            Alert.alert("Error", "Please enter your message");
-            return;
+    const validationSchema = Yup.object().shape({
+        name: Yup.string()
+            .required('name is required'),
+        mobileNumber: Yup.string()
+            .required('Mobile number is required')
+            .matches(/^[0-9]+$/, 'Must be a valid number'),
+        // .min(10, 'Mobile number must be at least 10 digits')
+        // .max(15, 'Mobile number cannot exceed 15 digits'),
+        message: Yup.string()
+            .required('Message is required')
+            .min(10, 'Message must be at least 10 characters'),
+    });
+
+    const handlehelpandsupport = async (values) => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTVVYTJsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1dwRmVVMTZVVEZPYVVselNXMW9kbVJZU25wSmFtOHdUME4zYVZwSFJqQmFWamt3WVZjeGJFbHFiMmxOYWtGNVRrTXdkMDVUTUhsUFEwRjRUbFJ2ZUUxRWIzcE5hVWx6U1c1S2RtSkhWV2xQYVVsNlNXbDNhVnBIVmpKaFYwNXNXREpzYTBscWIybE9hbFV3VG1wVk1FNXFWVEJKYmpBOQ==");
+            myHeaders.append("Cookie", "ci_session=a9b1350307207cca705e3dd2a281aaad99a31f42");
+            const formdata = new FormData();
+            formdata.append("name", values.name);
+            formdata.append("mobile", values.mobileNumber);
+            formdata.append("message", values.message);
+            formdata.append("user_id", "59");
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+            const response = await fetch(helpancontact, requestOptions);
+            const result = await response.json();
+            console.log("result----->", result)
+            if (result.status == 200) {
+                showMessage({
+                    message: result.message,
+                    type: "success",
+                    icon: "success"
+                })
+            }
+        } catch (error) {
+            console.log("error--->", error)
         }
-
-        // Logic to send the message goes here
-        // For demonstration purposes, we'll just log the message
-        console.log("Message sent to admin:", message);
-
-        // Clear the message input field after sending
-        setMessage("");
-        Alert.alert("Success", "Your message has been sent to the admin");
-    };
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <Header title={"Help and Support"} />
-            <View style={styles.content}>
-                {/* <Text style={styles.heading}>Help and Support</Text> */}
-                <TextInput
-                    style={styles.input}
-                    placeholder="Type your message here..."
-                    multiline
-                    numberOfLines={5}
-                    value={message}
-                    onChangeText={(text) => setMessage(text)}
-                />
-                {/* <TouchableOpacity style={styles.button} onPress={handleSendMessage}>
-                    <Text style={styles.buttonText}>Send Message</Text>
-                </TouchableOpacity> */}
-                <CustomButton size={"large"} backgroundColor={"#004E8C"} color={"white"} label={"Send Message"} onPress={handleSendMessage} />
-            </View>
+            <Formik
+                initialValues={{ name: '', mobileNumber: '', message: '' }}
+                validationSchema={validationSchema}
+                onSubmit={(values, actions) => {
+                    console.log('Form values:', values);
+                    // Handle form submission
+                    handlehelpandsupport(values);
+                    // Alert.alert("Success", "Your message has been sent to the admin");
+                    actions.resetForm(); // Reset form after submission
+                }}
+            >
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    <View>
+                        <View style={{ justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+                            <TextinputComponent
+                                label={"Name"}
+                                placeholder={"Enter your name"}
+                                inputType="name"
+                                onChangeText={handleChange('name')}
+                                onBlur={handleBlur('name')}
+                                value={values.name}
+                            />
+                            {errors.name && touched.name && <Text style={[styles.error, { marginRight: width * 0.6 }]}>{errors.name}</Text>}
+
+                            <TextinputComponent
+                                label={"Mobile Number"}
+                                placeholder={"Enter your mobile number"}
+                                inputType="phone"
+                                onChangeText={handleChange('mobileNumber')}
+                                onBlur={handleBlur('mobileNumber')}
+                                value={values.mobileNumber}
+                            />
+                            {errors.mobileNumber && touched.mobileNumber && <Text style={[styles.error, { marginRight: width * 0.45 }]}>{errors.mobileNumber}</Text>}
+                        </View>
+                        <View style={styles.content}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Type your message here..."
+                                multiline
+                                numberOfLines={5}
+                                onChangeText={handleChange('message')}
+                                onBlur={handleBlur('message')}
+                                value={values.message}
+                            />
+                            {errors.message && touched.message && <Text style={[styles.error, { marginRight: width * 0.2 }]}>{errors.message}</Text>}
+                        </View>
+                        <CustomButton
+                            size={"large"}
+                            backgroundColor={"#004E8C"}
+                            color={"white"}
+                            label={"Send Message"}
+                            onPress={handleSubmit}
+                        />
+                    </View>
+                )}
+            </Formik>
         </SafeAreaView>
     );
 };
@@ -50,39 +125,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FFF",
-        // padding: 20,
     },
     content: {
-        // flex: 1,
         justifyContent: "center",
         alignItems: "center",
         marginTop: height * 0.02,
         padding: 20,
     },
-    heading: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
     input: {
-        width: "100%",
+        width: "95%",
         height: 150,
         borderColor: "#ccc",
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
-        marginBottom: 20,
+        // marginBottom: 20,
     },
-    button: {
-        backgroundColor: "#007bff",
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 10,
-    },
-    buttonText: {
-        color: "#FFF",
-        fontSize: 16,
-        fontWeight: "bold",
+    error: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 8,
     },
 });
 

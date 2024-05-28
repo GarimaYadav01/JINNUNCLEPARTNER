@@ -1,14 +1,14 @@
 import { View, Text, SafeAreaView, ScrollView, StyleSheet, Dimensions, Image, TextInput, } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomButton from '../../compontent/Custombutton';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import TextinputComponent from '../../compontent/TextinputComponent';
-import { Loginapi } from '../apiconfig/Apiconfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Loginapi, techniciantyp } from '../apiconfig/Apiconfig';
 import { showMessage } from 'react-native-flash-message';
 const { height, width } = Dimensions.get("screen")
-
 const LoginScreen = () => {
     const navigation = useNavigation();
     const validationSchema = Yup.object().shape({
@@ -21,17 +21,13 @@ const LoginScreen = () => {
     });
     const handleLogin = async (values) => {
         try {
-            const myHeaders = new Headers();
-            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
-            myHeaders.append("Cookie", "ci_session=88c75d94ab3027c19a784b215bbd329c84721541");
             const formdata = new FormData();
-            formdata.append("email", values.email); // Use values.email from Formik
-            formdata.append("password", values.password); // Use values.password from Formik
+            formdata.append("email", values.email);
+            formdata.append("password", values.password);
             formdata.append("device_id", "654654654");
             formdata.append("firebase_token", "f5s6a4f65as4f654sa56f4sa65fsaafafafa");
             const requestOptions = {
                 method: "POST",
-                headers: myHeaders,
                 body: formdata,
                 redirect: "follow"
             };
@@ -44,7 +40,10 @@ const LoginScreen = () => {
                     type: "success",
                     icon: "success"
                 });
-                navigation.navigate("Otp")
+                // await AsyncStorage.setItem('token', response.data.token);
+                // // await AsyncStorage.setItem('token', "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
+                // console.log("dffbdmf--->", response.data.token)
+                navigation.navigate("Bottomnavigation")
             } else if (response.status == 400) {
                 showMessage({
                     message: "Wrong Email\/Mobile..",

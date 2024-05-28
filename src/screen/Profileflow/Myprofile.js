@@ -1,8 +1,11 @@
 import React from "react";
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, Dimensions, Image } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
 import Header from "../../compontent/Header";
+import { useNavigation } from "@react-navigation/native";
 const { height, width } = Dimensions.get("screen")
 const Myprofile = () => {
+
+    const navigation = useNavigation();
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header title={"My profile"} />
@@ -25,6 +28,9 @@ const Myprofile = () => {
                 <View style={styles.continer}>
                     <Text style={styles.text}>Password :</Text>
                     <Text style={styles.text2}>hdajhd@123</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("Changepassword")}>
+                        <Image source={require("../../assets/Icon/edit-text.png")} style={{ width: 20, height: 20, marginLeft: width * 0.25 }} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Dealer Name:</Text>
