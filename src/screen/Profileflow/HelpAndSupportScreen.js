@@ -8,12 +8,11 @@ import * as Yup from 'yup';
 import { useNavigation } from "@react-navigation/native";
 import { helpancontact } from "../apiconfig/Apiconfig";
 import { showMessage } from "react-native-flash-message";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { height, width } = Dimensions.get("screen")
 
 const HelpAndSupportScreen = () => {
     const navigation = useNavigation();
-
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .required('name is required'),
@@ -29,8 +28,9 @@ const HelpAndSupportScreen = () => {
 
     const handlehelpandsupport = async (values) => {
         try {
+            const token = await AsyncStorage.getItem("token")
             const myHeaders = new Headers();
-            myHeaders.append("token", "WlhsS01XTXlWbmxZTW14clNXcHZhVTVVYTJsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1dwRmVVMTZVVEZPYVVselNXMW9kbVJZU25wSmFtOHdUME4zYVZwSFJqQmFWamt3WVZjeGJFbHFiMmxOYWtGNVRrTXdkMDVUTUhsUFEwRjRUbFJ2ZUUxRWIzcE5hVWx6U1c1S2RtSkhWV2xQYVVsNlNXbDNhVnBIVmpKaFYwNXNXREpzYTBscWIybE9hbFV3VG1wVk1FNXFWVEJKYmpBOQ==");
+            myHeaders.append("token", token);
             myHeaders.append("Cookie", "ci_session=a9b1350307207cca705e3dd2a281aaad99a31f42");
             const formdata = new FormData();
             formdata.append("name", values.name);

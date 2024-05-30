@@ -15,6 +15,10 @@ const Otp = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isCodeEntered, setIsCodeEntered] = useState(false);
     const navigation = useNavigation();
+    const phoneNumber = props.route.params.phoneNumber
+    const email = props.route.params.email
+    console.log("phoneNumber-->", phoneNumber)
+    console.log("email--->", email)
     const onCodeFilled = (code) => {
         setCode(code);
         setIsCodeEntered(true);
@@ -22,25 +26,38 @@ const Otp = (props) => {
     const handleVerfiotp = async () => {
         try {
             const formdata = new FormData();
-            formdata.append("email", "shahrukh@gmail.com");
+            // formdata.append("email", email);
+            formdata.append("email", "shasssssh@gmail.com");
+            // formdata.append("otp", code);
             formdata.append("otp1", "1");
             formdata.append("otp2", "2");
             formdata.append("otp3", "3");
             formdata.append("otp4", "4");
+            console.log("email-->", email)
+            console.log("code-->", code)
+
             const requestOptions = {
                 method: "POST",
                 body: formdata,
                 redirect: "follow"
             };
             const response = await fetch(Otpapi, requestOptions);
+            console.log("response---->", response)
             const result = await response.json();
-            console.log("result--otp---->", result);
+            console.log("result---->", result)
 
-            if (response.status === 200) {
+            if (result.status == 200) {
                 showMessage({
                     message: "Otp verified successfully",
                     type: "success",
                     icon: "success"
+                });
+                navigation.navigate("LoginScreen"); // Assuming you want to navigate to a different screen on success
+            } else {
+                showMessage({
+                    message: "Otp verification failed",
+                    type: "danger",
+                    icon: "danger"
                 });
             }
         } catch (error) {
@@ -123,7 +140,7 @@ const Otp = (props) => {
                 <View style={styles.container1}>
                     <Text style={styles.header}>Otp Verification</Text>
                     <Text style={styles.subheading}>
-                        Enter your  one time password +91 3746327490
+                        Enter your  one time password  {phoneNumber}
                     </Text>
                     <CodeInput
                         activeColor="#004E8C"

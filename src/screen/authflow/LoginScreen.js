@@ -32,19 +32,18 @@ const LoginScreen = () => {
                 redirect: "follow"
             };
             const response = await fetch(Loginapi, requestOptions);
-            const result = await response.text();
+            const result = await response.json();
             console.log("result------>", result)
-            if (response.status == 200) {
+            if (result.status == 200) {
                 showMessage({
                     message: "Login successfully",
                     type: "success",
                     icon: "success"
                 });
-                // await AsyncStorage.setItem('token', response.data.token);
-                // // await AsyncStorage.setItem('token', "WlhsS01XTXlWbmxZTW14clNXcHZhVTFVVldsTVEwcDNXVmhPZW1ReU9YbGFRMGsyU1d0R2EySlhiSFZKVTFFd1RrUlJlVTVFUlhsT1EwWkJTMmxaYkVscGQybGhSemt4WTI1TmFVOXFVVFJNUTBwcldWaFNiRmd6VW5CaVYxVnBUMmxKZVUxRVNUQk1WRUY2VEZSSmVVbEVSVEZQYWtreVQycFJlRWxwZDJsamJUbHpXbE5KTmtscVNXbE1RMHByV2xoYWNGa3lWbVpoVjFGcFQyMDFNV0pIZURrPQ==");
-                // console.log("dffbdmf--->", response.data.token)
+                await AsyncStorage.setItem('token', result.data.token);
+                console.log("dffbdmf--->", result.data.token)
                 navigation.navigate("Bottomnavigation")
-            } else if (response.status == 400) {
+            } else {
                 showMessage({
                     message: "Wrong Email\/Mobile..",
                     type: "danger",

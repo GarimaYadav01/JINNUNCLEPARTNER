@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, FlatList, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
 const { width, height } = Dimensions.get("screen");
 
 const Card = () => {

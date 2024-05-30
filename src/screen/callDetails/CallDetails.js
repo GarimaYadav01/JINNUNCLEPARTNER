@@ -1,32 +1,75 @@
-import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Dimensions } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Dimensions, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Header from '../../compontent/Header';
 import Call from './Call';
 import Product from './Product';
 import Customer from './Customer';
+import { bookingdetails } from '../apiconfig/Apiconfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 const { height, width } = Dimensions.get("screen")
-
-const CallDetails = () => {
+const CallDetails = ({ route }) => {
+    const orderid = route?.params?.orderid
+    const navigation = useNavigation();
+    console.log("orderid---->", orderid)
     const [activeTab, setActiveTab] = useState("active");
+    const [isbookingdetails, setIsbookingdetails] = useState([])
+    console.log("isbookingdetails---------->", isbookingdetails)
+
+    useEffect(() => {
+        const handleFocus = () => {
+            getbookingdetails();
+        };
+        handleFocus();
+        const unsubscribeFocus = navigation.addListener('focus', handleFocus);
+        return unsubscribeFocus;
+    }, []);
+
+
+    const getbookingdetails = async () => {
+        try {
+            const token = await AsyncStorage.getItem("token")
+            const myHeaders = new Headers();
+            myHeaders.append("token", token);
+            myHeaders.append("Cookie", "ci_session=f9ab7c2e65bd3eee28e0e13590a480a2d83c63ba");
+            const formdata = new FormData();
+            formdata.append("order_id", orderid);
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+            const response = await fetch(bookingdetails, requestOptions);
+            const result = await response.json();
+            console.log("result----response>", result);
+            if (result.status == 200) {
+                setIsbookingdetails(result)
+            }
+        } catch (error) {
+            console.log("error----response>", error)
+        }
+    }
+
     const renderTabContent = () => {
         switch (activeTab) {
             case "active":
                 return (
                     <View style={styles.tabContent}>
-                        <Call />
+                        <Call bookingDetails={isbookingdetails} />
                     </View>
                 );
             case "newCall":
                 return (
                     <View style={styles.tabContent}>
-                        <Product />
+                        <Product bookingDetails={isbookingdetails} />
                     </View>
                 );
             case "pending":
                 return (
                     <View style={styles.tabContent}>
                         {/* <Text>Pending</Text> */}
-                        <Customer />
+                        <Customer bookingDetails={isbookingdetails} />
                     </View>
                 );
 
@@ -34,6 +77,7 @@ const CallDetails = () => {
                 return null;
         }
     };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
             <Header title={"3778384499"} showButton={true} buttonTitle="Start Work" />
@@ -51,6 +95,11 @@ const CallDetails = () => {
                 </View>
                 {renderTabContent()}
             </ScrollView>
+            {/* 
+            <FlatList
+                data={data}
+                renderItem={ }
+            /> */}
         </SafeAreaView>
     )
 }

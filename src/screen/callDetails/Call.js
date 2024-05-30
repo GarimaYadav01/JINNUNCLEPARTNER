@@ -1,53 +1,57 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 
-const Call = () => {
-    const data = [
-        {
-            id: "1",
-            title: "Call type",
-            subtitle: "Installation"
-        },
-        {
-            id: "2",
-            title: "Call Number",
-            subtitle: "2465778930"
-        },
-        {
-            id: "3",
-            title: "Nature of Complaint",
-            subtitle: "Installation required"
-        },
-        {
-            id: "4",
-            title: "Registered Date",
-            subtitle: "27/03/2024"
-        },
-        {
-            id: "5",
-            title: "Call type",
-            subtitle: "28/03/2024"
-        },
-        {
-            id: "6",
-            title: "Status",
-            subtitle: "28/03/2024"
-        }
-    ];
+const Call = ({ bookingDetails }) => {
+    console.log("bookingDetails--bookingDetails------>---->", bookingDetails)
 
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.subtitle}>{item.subtitle}</Text>
+        <View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Slot Date</Text>
+                <Text style={styles.subtitle}>{item.slot_date}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Slot Time</Text>
+                <Text style={styles.subtitle}>{item.slot_time}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Address</Text>
+                <Text style={styles.subtitle}>{item.address}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Shipping Charge</Text>
+                <Text style={styles.subtitle}>{item.shipping_charge}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>House Number</Text>
+                <Text style={styles.subtitle}>{item.house_str_no}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Email</Text>
+                <Text style={styles.subtitle}>{item.email}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Order Notes</Text>
+                <Text style={styles.subtitle}>{item.order_note}</Text>
+            </View>
+
         </View>
     );
+
+
+    const bookinglist = bookingDetails.data
+
+    console.log("bookinglistbookinglist----->", bookinglist)
+
+
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={data}
+                data={bookinglist}
+                // data={data}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id.toString()}
             />
         </View>
     );
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        color:"black"
+        color: "black"
     },
     subtitle: {
         fontSize: 16,

@@ -1,20 +1,35 @@
 import React, { useEffect } from 'react';
 import { View, Image, StyleSheet, SafeAreaView, StatusBar, Dimensions, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const { width, height } = Dimensions.get("screen");
 
 const Splash = () => {
     const navigation = useNavigation();
+    const getToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            return token !== null;
+        } catch (error) {
+            console.error('Error retrieving token:', error);
+            return false; // Return false in case of error
+        }
+    };
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            navigation.navigate("LoginScreen");
-        }, 2000);
-
+        const checkToken = async () => {
+            const tokenExists = await getToken();
+            if (tokenExists) {
+                navigation.replace('Bottomnavigation');
+            } else {
+                navigation.replace('LoginScreen');
+            }
+        };
+        const timeout = setTimeout(checkToken, 2000);
         return () => clearTimeout(timeout);
-    }, []);
+    }, [navigation]);
 
 
     return (

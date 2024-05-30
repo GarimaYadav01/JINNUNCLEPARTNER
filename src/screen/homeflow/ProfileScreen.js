@@ -2,12 +2,14 @@ import { View, Text, ScrollView, SafeAreaView, Image, StyleSheet, Dimensions, To
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import LogoutModal from '../../compontent/LogoutModal'
-const { height, width } = Dimensions.get("screen")
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { logoutapi } from '../apiconfig/Apiconfig'
+import { showMessage } from 'react-native-flash-message'
+const { height, width } = Dimensions.get("screen");
 const ProfileScreen = () => {
     const navigation = useNavigation();
-
     const [modalVisible, setModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const buttonData = [
         {
             id: "1",
@@ -34,12 +36,6 @@ const ProfileScreen = () => {
             screen: "MyWallet"
         },
         {
-            id: "5",
-            lable: "Payment & method",
-            image: require("../../assets/Icon/chevronright.png"),
-            screen: "Payment"
-        },
-        {
             id: "6",
             lable: "History",
             image: require("../../assets/Icon/chevronright.png"),
@@ -52,10 +48,41 @@ const ProfileScreen = () => {
         navigation.navigate(screen);
     };
 
-    const handleLogout = () => {
-        navigation.navigate("LoginScreen")
-    }
-
+    const handleLogout = async () => {
+        try {
+            setIsLoading(true);
+            const token = await AsyncStorage.getItem('token');
+            const myHeaders = new Headers();
+            myHeaders.append("token", token);
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                redirect: "follow"
+            };
+            const response = await fetch(logoutapi, requestOptions);
+            if (!response.ok) {
+                throw new Error('Network response was not ok' + response.statusText);
+            }
+            const result = await response.json();
+            console.log("Logout response:", result);
+            if (result.status === 200) {
+                setModalVisible(false);
+                await AsyncStorage.removeItem('token');
+                console.log('Logout successful');
+                setIsLoading(false);
+                setModalVisible(false);
+                navigation.navigate("LoginScreen");
+                showMessage({
+                    message: "Logout successfully",
+                    type: "success",
+                    icon: "success"
+                });
+            }
+        } catch (error) {
+            console.log('Error logging out:', error);
+            setIsLoading(false);
+        }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
@@ -84,12 +111,10 @@ const ProfileScreen = () => {
                 onLogout={handleLogout}
             />
         </SafeAreaView>
-
     )
 }
 
 export default ProfileScreen;
-
 const styles = StyleSheet.create({
     logo: {
         width: width * 0.5,
@@ -101,8 +126,7 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         color: "black",
         fontFamily: "Roboto-BoldItalic",
-        textAlign: "center"
-
+        textAlign: "center",
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -113,12 +137,11 @@ const styles = StyleSheet.create({
         // backgroundColor: "#FFF",
         justifyContent: "space-between",
         paddingHorizontal: 20
-
     },
     label: {
         fontSize: 20,
         marginRight: 10,
-        color: "#000"
+        color: "#000",
     },
     icon: {
         width: 20,

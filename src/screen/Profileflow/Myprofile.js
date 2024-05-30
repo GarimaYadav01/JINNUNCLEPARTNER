@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, SafeAreaView, ScrollView, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
 import Header from "../../compontent/Header";
 import { useNavigation } from "@react-navigation/native";
+import AuthContext from "../authcontext/Authcontext";
 const { height, width } = Dimensions.get("screen")
 const Myprofile = () => {
-
+    const { isgetprofile, } = useContext(AuthContext)
+    console.log("isgetprofile----->", isgetprofile)
     const navigation = useNavigation();
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -15,30 +17,30 @@ const Myprofile = () => {
             <ScrollView>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Email :</Text>
-                    <Text style={styles.text2}>garimayadav@gmail.com</Text>
+                    <Text style={styles.text2}>{isgetprofile.email}</Text>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Technician Name :</Text>
-                    <Text style={styles.text2}>Garima yadav</Text>
+                    <Text style={styles.text2}>{isgetprofile.first_name}</Text>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Phone Number :</Text>
-                    <Text style={styles.text2}>garimayadav@gmail.com</Text>
+                    <Text style={styles.text2}>{isgetprofile.mobile}</Text>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Password :</Text>
-                    <Text style={styles.text2}>hdajhd@123</Text>
+                    <Text style={styles.text2}>dd</Text>
                     <TouchableOpacity onPress={() => navigation.navigate("Changepassword")}>
                         <Image source={require("../../assets/Icon/edit-text.png")} style={{ width: 20, height: 20, marginLeft: width * 0.25 }} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Dealer Name:</Text>
-                    <Text style={styles.text2}>hwjfdks</Text>
+                    <Text style={styles.text2}>{isgetprofile.dealer_name}</Text>
                 </View>
                 <View style={styles.continer}>
                     <Text style={styles.text}>Technician Type :</Text>
-                    <Text style={styles.text2}>Ac repair</Text>
+                    <Text style={styles.text2}>{isgetprofile.technician_type}</Text>
                 </View>
             </ScrollView>
         </SafeAreaView>

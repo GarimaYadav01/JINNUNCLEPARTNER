@@ -15,7 +15,7 @@ const TextinputComponent = ({ label, placeholder, secureTextEntry, inputType, on
       imageSource = require('../assets/Icon/person.png');
       break;
     case 'password':
-      imageSource = require('../assets/Icon/closeyes.png'); // Default eye-closed icon
+      imageSource = require('../assets/Icon/padlock.png'); // Default eye-closed icon
       break;
     default:
       imageSource = null;
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: 'contain',
-    tintColor: "#FFF"
+    // tintColor: "#FFF"
   },
   inputField: {
     flex: 1,

@@ -79,7 +79,7 @@ const SignupScreen = () => {
             formdata.append("technician_type", values.technicianType);
             formdata.append("password", values.password);
             formdata.append("cpassword", values.password);
-            // formdata.append("device_id", "522623623623");
+            formdata.append("device_id", "522623623623");
             const requestOptions = {
                 method: "POST",
                 body: formdata,
@@ -94,6 +94,7 @@ const SignupScreen = () => {
                     icon: "success",
                     type: "success"
                 });
+                navigation.navigate("Otp",{phoneNumber:values.phoneNumber,email:values.email})
             } else if (result.status == 400) {
                 showMessage({
                     message: "This Email is already in use",
@@ -192,7 +193,7 @@ const SignupScreen = () => {
                         }
                         handleSubmitregistor(values);
                         console.log("values--->", values)
-                        // actions.resetForm(); // Reset form after submission
+                        actions.resetForm(); // Reset form after submission
                     }}
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (

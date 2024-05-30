@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Dimensions, TouchableOpacity, Button, Image, ScrollView } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const { height, width } = Dimensions.get("screen");
-const Product = () => {
+const Product = ({ bookingDetails }) => {
     const navigation = useNavigation();
     const [imageUris, setImageUris] = useState([]);
+    const bookinglistorder = bookingDetails.orders;
+    const bookinglist = bookingDetails.service_details
+    console.log("bookinglistorder----->", bookinglistorder);
     const data = [
         {
             id: "1",
@@ -57,11 +60,47 @@ const Product = () => {
         });
     };
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.subtitle}>{item.subtitle}</Text>
+        <View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Order Id</Text>
+                <Text style={styles.subtitle}>{item.order_id}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Name</Text>
+                <Text style={styles.subtitle}>{item.name}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Price</Text>
+                <Text style={styles.subtitle}>{item.price}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Quantity</Text>
+                <Text style={styles.subtitle}>{item.quantity}</Text>
+            </View>
+            <View>
+                <FlatList
+                    data={bookinglist}
+                    renderItem={renderItemflait}
+                    keyExtractor={item => item.id}
+                />
+            </View>
         </View>
     );
+
+
+    const renderItemflait = ({ item }) => (
+        <View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Service</Text>
+                <Text style={styles.subtitle}>{item.name}</Text>
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.title}>Short Description</Text>
+                <Text style={styles.subtitle}>{item.short_description}</Text>
+            </View>
+        </View>
+    );
+
 
     const renderImage = (uri) => (
         <View style={styles.imageContainer}>
@@ -83,17 +122,15 @@ const Product = () => {
                     </View>
                 </View>
                 <FlatList
-                    data={data}
+                    data={bookinglistorder}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                // keyExtractor={(item) => item.id.toString()}
                 />
 
                 <View style={styles.container}>
-
                     {imageUris.map((uri, index) => (
                         renderImage(uri)
                     ))}
-
                     <TouchableOpacity style={[styles.btn, { alignSelf: "center", marginTop: height * 0.03 }]} onPress={openCamera}>
                         <Text style={styles.text1}>Open Camera</Text>
                     </TouchableOpacity>

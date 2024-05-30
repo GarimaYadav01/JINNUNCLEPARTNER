@@ -1,28 +1,45 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Dimensions, Image } from 'react-native';
 import Header from '../../compontent/Header';
 import CustomButton from '../../compontent/Custombutton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { withdrawapi } from '../apiconfig/Apiconfig';
+import AuthContext from '../authcontext/Authcontext';
+import { showMessage } from 'react-native-flash-message';
 const { height, width } = Dimensions.get("screen")
-
-
 const WithdrawScreen = () => {
     const [amount, setAmount] = useState('');
-
-    const handleWithdraw = () => {
-        // Perform validation on the amount
-        if (!amount.trim()) {
-            Alert.alert('Error', 'Please enter the amount to withdraw');
-            return;
+    const { isgetprofile } = useContext(AuthContext);
+    console.log("isgetprofileisgetprofile---->", isgetprofile)
+    const handleWithdraw = async () => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userid = await AsyncStorage.getItem("userData")
+            const myHeaders = new Headers();
+            myHeaders.append("token", token);
+            myHeaders.append("Cookie", "ci_session=f916d27e70c5f25d36951444e9ed7222fa37d6fb");
+            const formdata = new FormData();
+            formdata.append("user_id", userid);
+            formdata.append("amount", amount);
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+            const response = await fetch(withdrawapi, requestOptions);
+            const result = await response.json();
+            console.log("result----respwithdrawapionse>", result);
+            if (result.status == 200) {
+                showMessage({
+                    message: result.message,
+                    type: "success",
+                    icon: "success"
+                })
+            }
+        } catch (error) {
+            console.log("errorerror---withdrawapi-->", error);
         }
-
-        // Perform withdrawal operation
-        // Here you can implement the logic to handle the withdrawal, such as API calls
-
-        // For demonstration, let's just show an alert with the withdrawal amount
-        Alert.alert('Withdrawal', `Withdrawal request for $${amount} submitted successfully`);
-
-        // Clear the input field after withdrawal
-        setAmount('');
     };
 
     const [selectedBank, setSelectedBank] = useState(null);
